@@ -1436,3 +1436,619 @@ Annual: × 52 = ~$67B
 *Guide compiled from deep research across all 20 casebooks. Every formula and example sourced from real MBA case interview materials.*
 
 **Last updated:** 2026 | **Coverage:** Anderson (2020), AGSM (2002), Bauer (2025), Booth (2025), Columbia (2021), Darden (2025), ESADE (2025), Fuqua (2024), Goizueta (2006), Haas (2019), HBS (2012), HKUST (2024), Illinois (2015), INSEAD (2021), Johnson (2021), Kellogg (2020), Sloan (2020), Stern (2024), Tuck (2024), Wharton (2025)
+
+---
+
+## 18. Advanced Math Topics (From Full Casebook Analysis)
+
+*The following sections cover additional math types discovered in Goizueta, Kellogg, ESADE, Illinois, Bauer, Harvard, and INSEAD casebooks.*
+
+---
+
+### 18.1 Price Elasticity of Demand
+
+**What it is:** Appears in Goizueta (2006), ESADE (2025), Kellogg (2020), and pricing-heavy cases. Measures how sensitive demand is to price changes.
+
+**Formula:**
+```
+Price Elasticity = % Change in Quantity Demanded / % Change in Price
+
+Elastic:   |elasticity| > 1 → demand is sensitive to price (luxury goods, commodities)
+Inelastic: |elasticity| < 1 → demand is not sensitive (essential goods, healthcare)
+Unit elastic: |elasticity| = 1 → revenue doesn't change with price
+
+Revenue = Price × Quantity = P × Q(P)
+To maximize revenue: find price where MR = 0
+  → happens at unit elasticity point
+```
+
+**Worked Example (Goizueta "Kool Aid" and pricing cases):**
+```
+Price increases 10%. Demand drops 5%.
+Elasticity = -5% / +10% = -0.5 → inelastic
+Revenue effect: +10% price × -5% volume = net +4.5% revenue → raise price
+
+Price increases 10%. Demand drops 15%.
+Elasticity = -15% / +10% = -1.5 → elastic
+Revenue effect: +10% price × -15% volume = net -6.5% revenue → don't raise price
+```
+
+**Common Traps:**
+- Elasticity is almost always negative (price up → demand down) — this is normal
+- Inelastic demand = should raise price (revenue goes up)
+- Elastic demand = should lower price (volume gain outweighs price cut)
+- "Cross-elasticity" = how demand for one product changes when competitor's price changes
+
+---
+
+### 18.2 Cannibalization Math
+
+**What it is:** Appears in Kellogg (2020), ESADE (2025), Fuqua (2024), and every new product launch case. When a new product steals sales from your existing product.
+
+**Formula:**
+```
+Net Revenue = New Product Revenue − Lost Revenue from Cannibalization
+
+Lost units = Existing product units × Cannibalization rate
+Lost revenue = Lost units × Existing product price
+Net revenue = (New units × New price) + (Remaining existing units × Existing price)
+```
+
+**Worked Example — Dark Sky (Kellogg 2020):**
+> Current Assessor: 50 units at $110k = $5.5M
+> Introducing JointBird: 90 units at $180k, 90% cannibalization
+
+```
+Cannibalized Assessors: 50 × 90% = 45 units → $4.95M lost
+Remaining Assessors: 50 − 45 = 5 units → $550k
+JointBird revenue: 90 × $180k = $16.2M
+Total: $16.2M + $550k = $16.75M (vs. $5.5M without new product)
+
+Compare all options:
+  Assessor only:        $5.50M
+  + SeaBird (40% cann): $3.3M + $11.0M = $14.3M
+  + SandBird (70% cann): $1.65M + $12.6M = $14.25M
+  + JointBird (90% cann): $0.55M + $16.2M = $16.75M ← winner
+```
+
+**Key insight:** Even 90% cannibalization is acceptable if the new product has enough revenue uplift. Always calculate total portfolio revenue, not just new product revenue.
+
+---
+
+### 18.3 Multi-Variable Revenue Calculation (5-Factor Problems)
+
+**What it is:** Appears in Kellogg DigiBooks, Chicouver Cycle, and many market-entry cases. Requires multiplying 4–6 variables together with different rates per segment.
+
+**Formula:**
+```
+Revenue = Segment Size × Reach Rate × Penetration Rate × Usage Rate × Price × Margin
+```
+
+**Worked Example — DigiBooks Retail Channel (Kellogg 2020):**
+> OR Segment = 20M people; Retail reach = 50%; Penetration = 40%; 10 books/year at $10; Tablet $100
+> E-book margin = 50%, E-reader margin = 30%; Overheads = $20M
+
+```
+E-book revenue component:
+  = 10 books × $10 × 50% margin = $50 contribution per person
+  = $50 × (20M × 50% reach × 40% penetration)
+  = $50 × 4M people = $200M
+
+Tablet revenue component:
+  = $100 × 30% margin = $30 contribution per person
+  = $30 × 4M people = $120M
+
+Total gross profit = $200M + $120M = $320M
+Less overheads = −$20M
+Net profit = $300M (Retail channel wins over Internet at $100M)
+```
+
+**Pro tip:** Draw a table first. Write all 5–6 variables in rows before multiplying. Get interviewer buy-in on your approach.
+
+---
+
+### 18.4 Bikeshare / Transportation Profitability Math
+
+**What it is:** Operations + profitability combo. Appears in Kellogg (2020) Chicouver Cycle case. Tests whether you can build a cost model with multiple cost components.
+
+**Formula:**
+```
+Revenue = $per_trip × trips_per_week × 50 weeks
+Bike Cost = $200 × number_of_bikes
+Station Cost = $10,000 × (bikes ÷ 20)  [docking only]
+Distribution Cost = cost_per_bike × number_of_bikes
+  [dockless = 2× docking distribution cost]
+
+Profit = Revenue − Bike Cost − Station Cost − Distribution Cost
+```
+
+**Worked Example (Kellogg 2020 — Nightlife vs. Tourism District):**
+
+| Trip Type | Revenue | Bikes | Bike Cost | Stations | Station Cost | Dist Cost (dock) | Docking Profit | Dockless Profit |
+|-----------|---------|-------|-----------|----------|--------------|-----------------|----------------|-----------------|
+| Commute | $25M | 50K | $10M | 2,500 | $25M | $5M | **−$15M** | **$5M** |
+| Tourism | $20M | 5K | $1M | 250 | $2.5M | $10M | **$6.5M** | **−$1M** |
+| Recreation | $15M | 4K | $0.8M | 200 | $2M | $2M | **$10.2M** | **$10.2M** |
+| Nightlife | $30M | 30K | $6M | 1,500 | $15M | $3M | **$6M** | **$18M** ← |
+
+**Answer:** Dockless + Nightlife = $18M profit. Station costs ($15M) destroyed docking profit; dockless eliminates stations but doubles distribution.
+
+**Key math insight:** Dockless is always better when station costs >> 2× distribution cost difference.
+
+---
+
+### 18.5 Insurance & Per-Member-Per-Month (PMPM) Math
+
+**What it is:** Healthcare insurance cases use PMPM as the standard unit. Appears in Kellogg Health Coaches, Garthwaite Healthcare, and INSEAD banking/insurance cases.
+
+**Formula:**
+```
+Annual cost per member = PMPM × 12
+Total annual cost = PMPM × 12 × # members
+
+Savings per member = PMPM × 12 × savings%
+
+Coach cost = salary × (1 + benefits%) 
+Portfolio capacity = contacts per day × working days per month
+Annual savings per coach = PMPM × 12 × savings% × portfolio size
+Net savings per coach = Annual savings − Coach annual cost
+Total program savings = Net per coach × # coaches needed
+```
+
+**Worked Example — Health Coaches DM Program (Kellogg 2020):**
+> PMPM for 65+ lifestyle = $1,200; 5% savings from monthly contact; Coach: $60k salary + 20% benefits; 8 patients/day, 25 days/month
+
+```
+Coach cost = $60k × 1.2 = $72k/year
+
+Portfolio size = 8 × 25 = 200 patients/month
+Annual savings per coach portfolio = $1,200 × 12 × 5% × 200 = $144,000
+
+Net savings per coach = $144k − $72k = $72,000 (2× return on each coach)
+
+Total 65+ lifestyle members = 5M × 20% (65+) × 40% (lifestyle) = 400,000
+Coaches needed = 400,000 / 200 = 2,000 coaches
+Total program savings = $72k × 2,000 = $144M/year
+```
+
+**Key insight:** Always convert PMPM to annual first. The 5% savings rate applied to high-cost members ($1,200/mo) generates far more value than the same rate on low-cost members ($400/mo).
+
+---
+
+### 18.6 Commission Structure Math
+
+**What it is:** Appears in Kellogg Garthwaite, banking cases, and sales force optimization cases. Involves calculating total commission spend and restructuring.
+
+**Formula:**
+```
+Total commission = commission per agent per month × agents × 12 months
+
+Max fee per member per month (make/buy analysis):
+  = Total cost of activities if done in-house / (members × 12)
+
+Break-even commission rate:
+  = Total activities cost / (Total premium × 12)
+```
+
+**Worked Example — Garthwaite Healthcare (Kellogg 2020):**
+> $25/agent/month × 500,000 agents × 12 = $150M/year total commission
+
+Restructuring: Flat fee per member per month. Max share to General Agencies:
+```
+In-house costs:
+  Training:              $6M
+  Application processing: $9M
+  Performance mgmt:     $15M
+  Total:                $30M
+
+Max per-member-per-month = $30M / (500,000 members × 12) = $5/member/month
+
+Total new commission per member = $20/member/month
+→ Agent gets: $20 − $5 = $15/member/month
+→ General Agency gets: $5/member/month (maximum)
+```
+
+---
+
+### 18.7 SaaS/Platform Pricing Change Analysis
+
+**What it is:** Appears in Kellogg Events.com (2020). Revenue flat despite volume growth = pricing change analysis.
+
+**Formula:**
+```
+Payment processing rate = Processing expenses / $ Processed
+Average fee rate = Revenue / $ Processed
+Price per registration = $ Processed / # Registrations
+
+Revenue impact of pricing change:
+  New fee revenue = new_rate × transaction_volume_in_bracket
+```
+
+**Worked Example — Events.com (Kellogg 2020):**
+
+```
+2017: Revenue $39.9M / $339M processed = 10% avg fee rate
+2018: Revenue $39.9M / $595M processed = 6.7% avg fee rate
+→ Fee rate FELL while volume grew → flat revenue
+
+Price per reg 2017: $339M / 8.0M = $50
+Price per reg 2018: $595M / 7.9M ≈ $75 → higher-value events joined (Ironman)
+
+Fix: Add 2.25% surcharge on registrations >$50
+  = 2.25% × $375M volume above $50 = $8,437,500 additional revenue
+  → Note: Do NOT round; exact math needed here
+```
+
+**Key insight:** Revenue = rate × volume. If volume goes up but revenue is flat, the rate fell. Decompose revenue into rate × volume to find the issue.
+
+---
+
+### 18.8 Healthcare / Market Sizing Chain (Full Pharma Model)
+
+**What it is:** Drug market sizing uses a specific sequential funnel. Appears in Kellogg, Columbia, INSEAD, Goizueta pharma cases.
+
+**Formula:**
+```
+TAM = Total population with condition
+  × % diagnosed
+  × % treated with medication
+  × % using our drug (market share)
+  × doses per year
+  × price per dose
+```
+
+**Worked Example — Diabetes Testing Break-Even (Illinois 2015):**
+> UK population 60M; 3% diabetes prevalence = 1.8M; 5% use testing kits = 90,000 patients.
+> Our machine: fixed cost $150k, variable $8/test, 365 tests/patient/year.
+
+```
+Break-even units = Fixed cost / (Price − Variable cost)
+  = $150,000 / (Price − $8)
+
+For $15 price: CM = $7 → BE = 150k/7 = 21,429 units
+For $20 price: CM = $12 → BE = 150k/12 = 12,500 units
+
+Addressable market (90,000 patients × 365 tests) = 32.85M test units
+Break-even at $20 = 12,500 units vs. market size 32.85M → very achievable
+```
+
+**Worked Example — Drug Screening Funnel (Columbia 2021 adapted):**
+```
+US population: 330M
+  × 10% with condition: 33M
+  × 60% diagnosed: 19.8M
+  × 40% on medication: 7.9M
+  × 25% use our drug: 2M patients
+  × 12 doses/year × $200/dose
+  = $4.8B annual revenue
+```
+
+---
+
+### 18.9 Decision Tree / Expected Value Math
+
+**What it is:** Appears in Goizueta (Probability section), pharma development cases, and investment decisions. Expected value = probability-weighted outcome.
+
+**Formula:**
+```
+Expected Value = Σ (Probability × Outcome)
+  = p1 × outcome1 + p2 × outcome2 + ...
+
+Decision: Take the branch with highest expected value
+Net EV = EV of action − cost of action
+```
+
+**Worked Example — Drug Development (pharma cases):**
+```
+New drug development:
+  Phase 1 success: 80% → Phase 2
+  Phase 2 success: 30% → Phase 3
+  Phase 3 success: 30% → Approval
+  Overall probability: 80% × 30% × 30% = 7.2%
+
+Value if approved: $2B
+R&D cost: $500M
+
+EV = 7.2% × $2B − $500M = $144M − $500M = −$356M → don't develop alone
+→ Need a partner or licensee to share risk
+
+Same drug licensed at 40% royalty rate:
+  EV = 7.2% × $2B × 40% − $0 = $57.6M → proceed with licensing
+```
+
+---
+
+### 18.10 Industry-Specific KPIs (From ESADE 2025 Industry Overviews)
+
+These metrics appear frequently in case exhibits — know what they mean and how to calculate them.
+
+#### Airlines
+```
+Load Factor = Passengers / Available Seats × 100%
+CASM = Operating Costs / (Seats × Miles Flown)       [Cost per Available Seat Mile]
+RASM = Total Revenue / (Seats × Miles Flown)          [Revenue per Available Seat Mile]
+Yield = Revenue / Revenue Passenger Miles
+Healthy load factor: 80–90%
+Break-even load factor: ~70–75% for most airlines
+```
+
+#### Hotels
+```
+Occupancy Rate = Rooms Sold / Available Rooms
+ADR (Avg Daily Rate) = Room Revenue / Rooms Sold
+RevPAR = ADR × Occupancy Rate  [Revenue Per Available Room]
+  OR = Total Room Revenue / Available Room Nights
+ALOS = Total Room Nights / # Bookings   [Avg Length of Stay]
+CAC = Marketing Spend / New Customers Acquired
+```
+
+#### Banking
+```
+Net Interest Margin (NIM) = (Interest Income − Interest Expense) / Avg Earning Assets
+ROA = Net Income / Average Total Assets
+ROE = Net Income / Shareholder Equity
+Non-Performing Loan Ratio = NPLs / Total Loans
+Medical Loss Ratio (insurance) = Claims Paid / Premium Revenue
+  Healthy insurance: 75–85% MLR
+```
+
+#### Retail
+```
+Same-Store Sales Growth = (Current Period Sales − Prior Period Sales) / Prior Period Sales
+Sales per Sq Ft = Revenue / Store Square Footage    [Good: $300–600/sq ft]
+Inventory Turns = COGS / Average Inventory
+Days Sales Outstanding = 365 / Inventory Turns
+Gross Margin Return on Inventory (GMROI) = Gross Profit / Average Inventory
+```
+
+#### SaaS/Tech
+```
+ARR = MRR × 12
+LTV = ARPU × Gross Margin % / Churn Rate
+LTV/CAC > 3 = healthy
+Payback Period = CAC / (ARPU × Gross Margin %)
+Net Revenue Retention = (Starting MRR − Churn + Expansion) / Starting MRR
+```
+
+---
+
+## 19. Goizueta Math Section — "Public Math" Guide
+
+*Goizueta's 2006 casebook has the most comprehensive mental math guide of all 20 books.*
+
+### The Zero Problem
+> "It's the zeroes, it's always the zeroes." — Goizueta 2006
+
+Standard consultant approach to large number multiplication:
+1. Remove all zeros and track them separately
+2. Multiply the remaining numbers
+3. Add zeros back at the end
+4. Sanity check: is this B, M, or K?
+
+```
+Example: 50,000 × 670,000
+  Zeros: 4 + 3 = 7 zeros
+  Numbers: 5 × 67 = 335
+  Answer: 335 × 10^7 = 3,350,000,000 = $3.35B
+
+Example: $25M × 15%
+  = 25M × 0.15
+  = 25 × 15 ÷ 100 = 375 ÷ 100 = 3.75M ✓
+```
+
+### The "÷ 15" Trick (Goizueta)
+> "What's it with consultants and 15?"
+
+Consultants love 15% margins and 15× multiples. Shortcut:
+```
+÷ 15 = ÷ 3 ÷ 5 = ÷ 3 × 0.2
+
+Example: $120M / 15 = $120M / 3 / 5 = $40M / 5 = $8M
+
+$300M × 15% = $300M × 15 / 100 = $45M
+  Check: 10% = $30M, 5% = $15M, 15% = $45M ✓
+```
+
+### Dealing with Fractions (Goizueta)
+When you see an ugly number, look for a clean fraction:
+```
+33.3% = 1/3
+16.7% = 1/6
+12.5% = 1/8
+37.5% = 3/8
+62.5% = 5/8
+87.5% = 7/8
+11.1% = 1/9
+9.1%  = 1/11
+8.3%  = 1/12
+```
+
+### The Four Calculation Tricks (Bauer 2025)
+**Trick 1 — Convert to 10s:**
+```
+43 + 74 → move 6 from 43 to 74 = 37 + 80 = 117
+```
+
+**Trick 2 — Break digits apart:**
+```
+92 × 18 = (92 × 10) + (92 × 8)
+        = 920 + 736 = 1,656
+```
+
+**Trick 3 — Count zeros, remove, multiply, add back:**
+```
+50,000 × 670,000 = 5 × 67 × 10^8 = 335 × 10^8 = 33.5B
+```
+
+**Trick 4 — Labels, labels, labels:**
+Never mix units. If some numbers are in $M and others in $B, convert everything before calculating.
+
+---
+
+## 20. Real Case Math Compilations by Industry
+
+### Retail / Consumer Goods
+- Market sizing: Population × households × units/year × price
+- Profitability: Revenue per SKU × units sold − COGS − SG&A − Fixed overhead
+- Same-store sales: Foot traffic × conversion × basket size × price
+- Keyboard Co. (Bauer 2025): 6M total keyboards × % type × price per type = market by segment
+  - 2022: $225M (Mechanical) + $180M (Membrane) + $540M (Ergonomic) = **$945M**
+- Entering new market: Market size × market share % = additional revenue
+  - Keyboard: $540M ergonomic × 20% = $108M; $180M membrane × 60% = $108M (tie → use qualitative factors)
+
+### Publishing / Media
+- Revenue: Audience reach% × (US + EU audience) × price per unit
+- Ostrich Books (Bauer 2025): Revenue = 40% × (400k US + 500k EU) × $200 = $72M
+  - Cost: $25M fixed + variable per copy
+  - Best book: maximize revenue − cost = profit
+- Dark Sky (Kellogg 2020): Revenue = units × price per aircraft − cannibalized Assessor units × Assessor price
+
+### Healthcare / Insurance
+- PMPM model: Monthly cost per member × 12 × members = total annual cost
+- Medical cost = claims per member × members × cost per claim
+- Break-even coaching = (Savings − Coach cost) / Coach cost (2x return = attractive)
+- GHC Garthwaite: $25 × 500k agents × 12 = $150M commissions
+- Max fee = $30M activities / (500k members × 12) = $5/member/month
+
+### E-commerce / SaaS / Platform
+- Revenue = GMV × take rate (e.g., $100 registration × 10% fee = $10 revenue)
+- Processing rate = processing expense / $ processed (constant 2% in Events.com)
+- Pricing change impact: new rate × affected volume = revenue change
+- Events.com: 2.25% × $375M = $8.4375M exactly (don't round)
+
+### Transportation / Logistics
+- Bikeshare: Revenue = $1/trip × trips × 50 weeks; Costs = bikes + stations + distribution
+- Airline: Load factor × seats × price × flights = revenue
+- Bottleneck in manufacturing: time per stage → find the longest → that's your throughput limit
+
+---
+
+## 21. The 15 Most Common Math Mistakes in Cases
+
+Based on patterns across all 20 casebooks:
+
+1. **Losing a zero** — $3.35B written as $335M. Always write units.
+2. **Margin vs. markup confusion** — 40% margin ≠ 40% markup.
+3. **% change vs. percentage points** — "Margin fell from 30% to 20%" = fell 10 pp, not 33%.
+4. **Annual vs. monthly** — PMPM × 12 = annual. Miss the ×12 and you're 12x off.
+5. **Missing the overlap** (HuDisney) — subscribers in both groups get double-counted without careful tracking.
+6. **Break-even denominator** — using Revenue instead of Contribution Margin.
+7. **Forgetting cannibalization** — new product revenue alone ignores what the old product loses.
+8. **CAGR ≠ simple growth** — 4 years at 20%/yr = 107% total, NOT 80%.
+9. **Wrong denominator for market share** — addressable market vs. total market vs. served market.
+10. **NPV without subtracting initial investment** — PV of cash flows − initial investment = NPV.
+11. **Confusing variable and fixed costs** — variable costs scale with volume; fixed don't.
+12. **Units mismatch** — adding millions and billions without converting.
+13. **Not sanity-checking** — if a market is $500T, that's larger than global GDP. Something is wrong.
+14. **Forgetting ALL revenue streams** — cases often have multiple lines (ticket + merchandise + broadcast).
+15. **Rounding too early** — round at the end, not mid-calculation, or clearly state your rounding.
+
+---
+
+## 22. Additional Drill Problems (From New Casebooks)
+
+**D26.** You're analyzing a bikeshare system. 500 trips/week, 50k bikes, flat terrain, docked system. Bike cost $200, stations hold 20 bikes at $10k each, distribution cost $100/bike. Revenue $1/trip, 50 weeks. Annual profit?
+
+*Answer:*
+```
+Revenue = $1 × 500K × 50 = $25M
+Bike cost = $200 × 50K = $10M
+Stations = 50K/20 = 2,500 × $10K = $25M
+Dist = $100 × 50K = $5M
+Profit = $25M − $10M − $25M − $5M = −$15M (loss — dockless would save $25M on stations)
+```
+
+---
+
+**D27.** Dark Sky sells 50 Assessors at $110k. New JointBird: 90 units at $180k, 90% cannibalization. Net revenue with JointBird vs. without?
+
+*Answer:*
+```
+Without: 50 × $110K = $5.5M
+With: (5 × $110K) + (90 × $180K) = $550K + $16.2M = $16.75M
+Net increase: +$11.25M
+```
+
+---
+
+**D28.** Health insurance payer: 400,000 members in 65+ lifestyle segment. PMPM = $1,200. 5% savings from DM program. Coach costs $72k/year, handles 200 patients. Total annual net savings?
+
+*Answer:*
+```
+Savings per coach = $1,200 × 12 × 5% × 200 = $144K
+Net per coach = $144K − $72K = $72K
+Coaches needed = 400K / 200 = 2,000
+Total savings = 2,000 × $72K = $144M
+```
+
+---
+
+**D29.** Events.com: $595M in payment volume, 7.9M registrations, $39.9M revenue. What is the average registration price? Average fee rate?
+
+*Answer:*
+```
+Avg price = $595M / 7.9M = ~$75/registration
+Avg fee rate = $39.9M / $595M = 6.7%
+(Down from 10% in 2017 due to pricing change)
+```
+
+---
+
+**D30.** DigiBooks: Occasional Reader segment (20M people). Retail channel: 50% reach, 40% penetration. 10 books/year at $10 each with 50% margin. Tablet at $100 with 30% margin. Overhead $20M. Channel profit?
+
+*Answer:*
+```
+Addressable customers = 20M × 50% × 40% = 4M
+E-book contribution = 10 × $10 × 50% × 4M = $200M
+Tablet contribution = $100 × 30% × 4M = $120M
+Gross = $320M − $20M = $300M
+```
+
+---
+
+**D31.** Price elasticity: You raise price 8%. Quantity falls 20%. Should you raise the price?
+
+*Answer:*
+```
+Elasticity = −20% / +8% = −2.5 → highly elastic
+Revenue change: +8% price × −20% volume = net −13.6% → do NOT raise price
+```
+
+---
+
+**D32.** Drug development: Phase success rates 80% / 30% / 30%. Value if approved $3B. Cost $400M. EV?
+
+*Answer:*
+```
+P(approval) = 80% × 30% × 30% = 7.2%
+EV = 7.2% × $3B − $400M = $216M − $400M = −$184M
+Negative NPV → don't develop alone. Need partnership or licensing deal.
+```
+
+---
+
+**D33.** Keyboard market 2022: 6M units total. Mechanical 25% share at $150, Membrane 30% at $100, Ergonomic 45% at $200. Total market size?
+
+*Answer:*
+```
+Mechanical: 6M × 25% × $150 = $225M
+Membrane:   6M × 30% × $100 = $180M
+Ergonomic:  6M × 45% × $200 = $540M
+Total = $945M
+```
+
+---
+
+**D34.** Insurance commissions: $25/agent/month × 500,000 agents × 12 months = ?
+
+*Answer: $150,000,000 ($150M)*
+
+---
+
+**D35.** General agency activities cost $30M internally. 500,000 members, 12 months. Max per-member-per-month fee?
+
+*Answer: $30M / (500K × 12) = $5/member/month*
+
+---
+
+*End of Appendix — Guide now covers all 20 casebooks.*
