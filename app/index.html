@@ -23,7 +23,7 @@
     --text: #f1f1f5;
     --muted: #888899;
     --radius: 12px;
-    --content-max: 960px;
+    --content-max: 1180px;
   }
 
   body {
@@ -34,7 +34,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 16px 60px;
+    padding: 20px clamp(16px, 4vw, 40px) 60px;
   }
 
   /* ── Header ── */
@@ -159,26 +159,24 @@
   .timer.fast { color: var(--yellow); }
 
   .question-text {
-    font-size: 22px;
+    font-size: clamp(22px, 2.2vw, 28px);
     font-weight: 700;
     line-height: 1.45;
     color: var(--text);
     margin-bottom: 14px;
     text-align: left;
     white-space: pre-line;
-    max-width: 520px;
-    margin-left: auto;
-    margin-right: auto;
+    width: 100%;
   }
   .question-instructions {
     font-size: 13px;
     color: var(--muted);
-    text-align: center;
+    text-align: left;
     margin-bottom: 12px;
   }
   .hint-details {
-    max-width: 520px;
-    margin: 0 auto 20px;
+    width: 100%;
+    margin: 0 0 20px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--surface2);
@@ -204,18 +202,27 @@
   }
 
   .answer-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     gap: 10px;
+    align-items: stretch;
+  }
+  @media (max-width: 540px) {
+    .answer-row {
+      grid-template-columns: 1fr;
+    }
+    .answer-row .btn { width: 100%; }
   }
   .answer-input {
-    flex: 1;
+    min-width: 0;
+    min-height: 48px;
     background: var(--surface2);
     border: 2px solid var(--border);
     color: var(--text);
     font-size: 20px;
     font-weight: 600;
     font-family: 'Inter', sans-serif;
-    padding: 12px 16px;
+    padding: 10px 16px;
     border-radius: var(--radius);
     outline: none;
     transition: border-color 0.2s;
@@ -236,6 +243,17 @@
   .btn:active { transform: scale(0.97); }
   .btn-primary { background: var(--blue); color: #fff; }
   .btn-skip { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+  .answer-row .btn {
+    padding: 0 22px;
+    min-height: 48px;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  .answer-row .btn-primary { border-color: var(--blue); }
+  .answer-row .btn-skip { border-color: var(--border); }
   .btn-next { background: var(--green); color: #fff; width: 100%; margin-top: 16px; font-size: 16px; padding: 14px; }
 
   /* ── Feedback Panel ── */
