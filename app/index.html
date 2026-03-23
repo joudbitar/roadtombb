@@ -168,12 +168,6 @@
     white-space: pre-line;
     width: 100%;
   }
-  .question-instructions {
-    font-size: 13px;
-    color: var(--muted);
-    text-align: left;
-    margin-bottom: 12px;
-  }
   .hint-details {
     width: 100%;
     margin: 0 0 20px;
@@ -670,7 +664,6 @@
     <span class="timer" id="timer">0:00</span>
   </div>
   <div class="question-text" id="questionText">Loading...</div>
-  <div class="question-instructions">Work it out on paper, then type your answer below</div>
   <details class="hint-details" id="hintDetails">
     <summary>Show hint</summary>
     <div class="hint-body" id="hintText"></div>
@@ -906,7 +899,7 @@ function genTimesTable() {
     answer: a*b,
     tolerance: 0,
     solution: `${a} × ${b} = <strong>${(a*b).toLocaleString()}</strong>`,
-    hint: 'Work it out on paper, then type your answer below'
+    hint: 'Multiply the two factors; sanity-check with a rough estimate if needed.'
   };
 }
 
