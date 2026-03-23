@@ -159,18 +159,48 @@
   .timer.fast { color: var(--yellow); }
 
   .question-text {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 700;
-    line-height: 1.35;
+    line-height: 1.45;
     color: var(--text);
-    margin-bottom: 10px;
-    text-align: center;
+    margin-bottom: 14px;
+    text-align: left;
+    white-space: pre-line;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
   }
-  .question-hint {
+  .question-instructions {
     font-size: 13px;
     color: var(--muted);
     text-align: center;
-    margin-bottom: 28px;
+    margin-bottom: 12px;
+  }
+  .hint-details {
+    max-width: 520px;
+    margin: 0 auto 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface2);
+    padding: 0;
+  }
+  .hint-details summary {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue);
+    padding: 10px 14px;
+    list-style: none;
+  }
+  .hint-details summary::-webkit-details-marker { display: none; }
+  .hint-details .hint-body {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+    padding: 0 14px 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 0;
+    padding-top: 10px;
   }
 
   .answer-row {
@@ -622,7 +652,11 @@
     <span class="timer" id="timer">0:00</span>
   </div>
   <div class="question-text" id="questionText">Loading...</div>
-  <div class="question-hint">Work it out on paper, then type your answer below</div>
+  <div class="question-instructions">Work it out on paper, then type your answer below</div>
+  <details class="hint-details" id="hintDetails">
+    <summary>Show hint</summary>
+    <div class="hint-body" id="hintText"></div>
+  </details>
   <div class="answer-row">
     <input class="answer-input" id="answerInput" type="text" placeholder="Your answer" autocomplete="off" autocorrect="off">
     <button class="btn btn-primary" onclick="submitAnswer()">Check</button>
@@ -994,11 +1028,17 @@ function genBreakEven() {
   const beu = fc * 1000 / cm;
   return {
     category: 'Break-Even Analysis',
-    question: `Fixed costs: $${(fc).toLocaleString()}k\nContribution margin per unit: $${cm}\nHow many units to break even?`,
+    question:
+`Break-even (units to cover fixed costs)
+
+• Annual fixed costs: $${fc.toLocaleString()}k
+• Contribution margin per unit: $${cm} (price minus variable cost per unit)
+
+How many units must the company sell in a year to break even?`,
     answer: beu,
     tolerance: 0,
-    solution: `BE Units = Fixed Costs / CM = $${(fc*1000).toLocaleString()} / $${cm} = <strong>${beu.toLocaleString()} units</strong>`,
-    hint: 'Break-Even = Fixed Costs ÷ Contribution Margin per Unit'
+    solution: `BE units = Fixed costs ÷ Contribution margin per unit<br>= $${(fc*1000).toLocaleString()} ÷ $${cm} = <strong>${beu.toLocaleString()} units</strong>`,
+    hint: `Formula: break-even units = (Fixed costs in $) ÷ (Contribution margin per unit). Here: $${fc.toLocaleString()}k = $${(fc * 1000).toLocaleString()}.`
   };
 }
 
@@ -1421,6 +1461,9 @@ function loadQuestion() {
   const q = STATE.currentQ;
 
   document.getElementById('questionText').textContent = q.question;
+  document.getElementById('hintText').textContent = q.hint || 'Use the definition from the case framework, then plug in the numbers.';
+  const hintEl = document.getElementById('hintDetails');
+  if (hintEl) hintEl.open = false;
   document.getElementById('categoryBadge').textContent = q.category;
   document.getElementById('feedbackPanel').className = 'feedback-panel';
   document.getElementById('streakBanner').className = 'streak-banner';
