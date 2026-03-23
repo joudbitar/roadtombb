@@ -1390,7 +1390,7 @@ function renderCatalog() {
       const c = CATEGORIES[id];
       if (!c) return '';
       const p = STATE.categoryProgress[id] || { correct: 0, total: 0 };
-      const progress = p.total > 0 ? `${p.correct} / ${p.total}` : '0 / 0';
+      const progress = p.total > 0 ? `${p.correct} / ${p.total}` : '—';
       return `<button type="button" class="catalog-card" data-cat="${escapeHtml(id)}">
       <span class="catalog-rank">#${c.rank} · ${escapeHtml(c.difficultyLabel)}</span>
       <span class="catalog-name">${escapeHtml(c.name)}</span>
