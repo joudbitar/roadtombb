@@ -722,6 +722,8 @@ const STATE = {
   currentQ: null, answered: false,
 };
 
+const LOCAL_PROGRESS_KEY = 'roadtombb_category_progress';
+
 // ── Supabase Auth & Persistence ─────────────────────────────
 let sb = null;
 function initSupabase() {
@@ -836,21 +838,42 @@ async function loadProgress() {
   await loadCategoryProgress();
 }
 
-async function loadCategoryProgress() {
-  if (!sb) return;
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) return;
+function loadLocalCategoryProgress() {
   try {
-    const { data, error } = await sb.from('user_category_progress').select('category_id, correct, total').eq('user_id', user.id);
-    if (error) throw error;
-    STATE.categoryProgress = {};
-    (data || []).forEach(row => {
-      STATE.categoryProgress[row.category_id] = { correct: row.correct, total: row.total };
-    });
-  } catch (e) {
-    console.warn('user_category_progress:', e.message || e);
-    STATE.categoryProgress = {};
+    const raw = localStorage.getItem(LOCAL_PROGRESS_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') {
+      STATE.categoryProgress = parsed;
+    }
+  } catch (e) { /* ignore */ }
+}
+
+function saveLocalCategoryProgress() {
+  try {
+    localStorage.setItem(LOCAL_PROGRESS_KEY, JSON.stringify(STATE.categoryProgress));
+  } catch (e) { /* ignore */ }
+}
+
+async function loadCategoryProgress() {
+  if (sb) {
+    const { data: { user } } = await sb.auth.getUser();
+    if (user) {
+      try {
+        const { data, error } = await sb.from('user_category_progress').select('category_id, correct, total').eq('user_id', user.id);
+        if (error) throw error;
+        STATE.categoryProgress = {};
+        (data || []).forEach(row => {
+          STATE.categoryProgress[row.category_id] = { correct: row.correct, total: row.total };
+        });
+        return;
+      } catch (e) {
+        console.warn('user_category_progress:', e.message || e);
+        return;
+      }
+    }
   }
+  loadLocalCategoryProgress();
 }
 
 async function saveProgress() {
@@ -1577,6 +1600,8 @@ function bumpCategoryProgress(categoryId, wasCorrect) {
   p.total++;
   if (wasCorrect) p.correct++;
   STATE.categoryProgress[categoryId] = p;
+  if (!sb) { saveLocalCategoryProgress(); return; }
+  sb.auth.getUser().then(({ data: { user } }) => { if (!user) saveLocalCategoryProgress(); });
 }
 
 function skipQuestion() {
@@ -1680,7 +1705,11 @@ async function init() {
     updateAuthUI(session?.user ?? null);
     if (session) {
       await loadProgress();
+    } else {
+      await loadCategoryProgress();
     }
+  } else {
+    await loadCategoryProgress();
   }
   updatePracticeBadge();
   updateStats();
