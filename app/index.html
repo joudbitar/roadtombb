@@ -309,31 +309,93 @@
   .locked-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
   .locked-desc { font-size: 14px; color: var(--muted); }
 
-  /* ── Level Tabs ── */
-  .level-tabs {
+  /* ── Catalog (roadmap) ── */
+  .catalog-view {
     width: 100%;
     max-width: 640px;
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
-  .level-tab {
-    flex: 1;
-    padding: 8px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 700;
-    text-align: center;
-    cursor: pointer;
+  .catalog-heading {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .catalog-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    line-height: 1.45;
+  }
+  .catalog-random-btn {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 14px 20px;
+    font-size: 15px;
+  }
+  .catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+  }
+  .catalog-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    padding: 12px 14px;
+    border-radius: var(--radius);
     border: 1px solid var(--border);
     background: var(--surface);
-    color: var(--muted);
-    transition: all 0.2s;
-    letter-spacing: 0.03em;
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s, background 0.2s;
   }
-  .level-tab.active { background: var(--blue-dim); border-color: var(--blue); color: var(--blue); }
-  .level-tab.locked-tab { opacity: 0.4; cursor: not-allowed; }
-  .level-tab-name { font-size: 10px; margin-top: 2px; display: block; }
+  .catalog-card:hover {
+    border-color: var(--blue);
+    background: var(--surface2);
+  }
+  .catalog-rank {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .catalog-name {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 6px;
+  }
+  .catalog-meta {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.3;
+  }
+
+  /* ── Drill view ── */
+  .drill-view {
+    width: 100%;
+    max-width: 640px;
+  }
+  .drill-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .drill-back {
+    flex-shrink: 0;
+  }
+  .drill-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--muted);
+    flex: 1;
+    text-align: right;
+  }
 
   /* ── Auth UI ── */
   .auth-area {
@@ -428,7 +490,7 @@
   @media (max-width: 480px) {
     .question-text { font-size: 20px; }
     .stats-row { grid-template-columns: repeat(2, 1fr); }
-    .level-tab-name { display: none; }
+    .catalog-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -444,7 +506,7 @@
       <button class="btn-signout" onclick="signOut()">Sign out</button>
     </div>
   </div>
-  <div class="level-badge" id="levelBadge">Level 1 — Analyst Intern</div>
+  <div class="level-badge" id="levelBadge">Roadmap</div>
 </div>
 
 <!-- Auth banner (guests) -->
@@ -474,7 +536,7 @@
 <div class="xp-section">
   <div class="xp-meta">
     <span id="xpLabel">0 XP</span>
-    <span id="xpNext">Next unlock: 200 XP</span>
+    <span id="xpNext">Next milestone: 200 XP</span>
   </div>
   <div class="xp-bar-bg"><div class="xp-bar-fill" id="xpBar" style="width:0%"></div></div>
 </div>
@@ -499,21 +561,20 @@
   </div>
 </div>
 
-<!-- Level Tabs -->
-<div class="level-tabs">
-  <div class="level-tab active" id="tab-1" onclick="switchLevel(1)">
-    LVL 1 <span class="level-tab-name">Mental Math</span>
-  </div>
-  <div class="level-tab locked-tab" id="tab-2" onclick="switchLevel(2)">
-    LVL 2 <span class="level-tab-name">Business Arith</span>
-  </div>
-  <div class="level-tab locked-tab" id="tab-3" onclick="switchLevel(3)">
-    LVL 3 <span class="level-tab-name">Case Math</span>
-  </div>
-  <div class="level-tab locked-tab" id="tab-4" onclick="switchLevel(4)">
-    LVL 4 <span class="level-tab-name">MBB Ready</span>
-  </div>
+<!-- Catalog (roadmap) -->
+<div class="catalog-view" id="catalogView">
+  <h2 class="catalog-heading">Math roadmap</h2>
+  <p class="catalog-sub">Pick a topic from the case math guide (same types as in our research doc). Everything is unlocked — practice what you need.</p>
+  <button type="button" class="btn btn-primary catalog-random-btn" onclick="startDrill(null)">Random mix (all topics)</button>
+  <div class="catalog-grid" id="catalogGrid"></div>
 </div>
+
+<!-- Drill -->
+<div class="drill-view" id="drillView" style="display:none">
+  <div class="drill-header">
+    <button type="button" class="btn btn-skip drill-back" onclick="backToCatalog()">← Roadmap</button>
+    <span class="drill-title" id="drillTitle">Practice</span>
+  </div>
 
 <!-- Question Card -->
 <div class="question-card" id="questionCard">
@@ -542,12 +603,6 @@
 
   <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()" style="display:none">Next Question →</button>
 </div>
-
-<!-- Locked Message -->
-<div class="locked-card" id="lockedCard">
-  <div class="locked-icon">🔒</div>
-  <div class="locked-title" id="lockedTitle">Level 2 Locked</div>
-  <div class="locked-desc" id="lockedDesc">Earn 200 XP to unlock Business Arithmetic</div>
 </div>
 
 <!-- Config & Supabase (config.js is optional; copy from config.example.js) -->
@@ -555,14 +610,14 @@
 <script src="config.js" onerror="window.__SUPABASE_CONFIG__=null"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Level Up Modal -->
-<div class="modal-overlay" id="levelUpModal">
+<!-- XP milestone modal -->
+<div class="modal-overlay" id="milestoneModal">
   <div class="modal">
     <div class="modal-emoji">🎉</div>
-    <div class="modal-title">Level Up!</div>
-    <div class="modal-subtitle">You've unlocked a new level</div>
-    <div class="modal-new-level" id="modalLevelName"></div>
-    <button class="modal-btn" onclick="closeModal()">Let's Go →</button>
+    <div class="modal-title">Milestone!</div>
+    <div class="modal-subtitle">You crossed an XP threshold</div>
+    <div class="modal-new-level" id="modalMilestoneText"></div>
+    <button class="modal-btn" onclick="closeMilestoneModal()">Keep going →</button>
   </div>
 </div>
 
@@ -570,9 +625,11 @@
 // ── State ──────────────────────────────────────────────────
 const STATE = {
   xp: 0, streak: 0, correct: 0, total: 0,
-  activeLevel: 1, unlockedLevel: 1,
+  activeCategory: null, // null = random mix when in drill
+  view: 'catalog', // 'catalog' | 'drill'
+  categoryProgress: {}, // { categoryId: { correct, total } }
   timerInterval: null, timerSecs: 0,
-  currentQ: null, answered: false
+  currentQ: null, answered: false,
 };
 
 // ── Supabase Auth & Persistence ─────────────────────────────
@@ -636,7 +693,7 @@ async function submitAuth(e) {
     closeAuthModal();
     const { data: { user } } = await supabase.auth.getUser();
     updateAuthUI(user);
-    if (user) await loadProgress().then(() => { updateStats(); syncLevelTabs(); });
+    if (user) await loadProgress().then(() => { updateStats(); renderCatalog(); });
   } catch (err) {
     errEl.textContent = err.message || 'Something went wrong';
   }
@@ -647,6 +704,13 @@ async function submitAuth(e) {
 async function signOut() {
   if (!supabase) return;
   await supabase.auth.signOut();
+  STATE.xp = 0;
+  STATE.streak = 0;
+  STATE.correct = 0;
+  STATE.total = 0;
+  STATE.categoryProgress = {};
+  updateStats();
+  renderCatalog();
   updateAuthUI(null);
 }
 
@@ -672,14 +736,30 @@ async function loadProgress() {
   if (!supabase) return;
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
-  const { data } = await supabase.from('user_progress').select('xp, streak, correct, total, unlocked_level, active_level').eq('user_id', user.id).single();
+  const { data } = await supabase.from('user_progress').select('xp, streak, correct, total').eq('user_id', user.id).single();
   if (data) {
     STATE.xp = data.xp ?? 0;
     STATE.streak = data.streak ?? 0;
     STATE.correct = data.correct ?? 0;
     STATE.total = data.total ?? 0;
-    STATE.unlockedLevel = Math.min(4, Math.max(1, data.unlocked_level ?? 1));
-    STATE.activeLevel = Math.min(STATE.unlockedLevel, Math.max(1, data.active_level ?? 1));
+  }
+  await loadCategoryProgress();
+}
+
+async function loadCategoryProgress() {
+  if (!supabase) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  try {
+    const { data, error } = await supabase.from('user_category_progress').select('category_id, correct, total').eq('user_id', user.id);
+    if (error) throw error;
+    STATE.categoryProgress = {};
+    (data || []).forEach(row => {
+      STATE.categoryProgress[row.category_id] = { correct: row.correct, total: row.total };
+    });
+  } catch (e) {
+    console.warn('user_category_progress:', e.message || e);
+    STATE.categoryProgress = {};
   }
 }
 
@@ -693,14 +773,27 @@ async function saveProgress() {
     streak: STATE.streak,
     correct: STATE.correct,
     total: STATE.total,
-    unlocked_level: STATE.unlockedLevel,
-    active_level: STATE.activeLevel
+    unlocked_level: 1,
+    active_level: 1
   }, { onConflict: 'user_id' });
 }
 
-const LEVEL_XP   = [0, 0, 200, 600, 1500];
-const LEVEL_NAMES = ['', 'Analyst Intern', 'Business Analyst', 'Case Analyst', 'MBB Ready'];
-const LEVEL_XP_AWARD = [0, 10, 20, 30, 50];
+async function saveCategoryProgressRow(categoryId) {
+  if (!supabase || !categoryId) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  const p = STATE.categoryProgress[categoryId] || { correct: 0, total: 0 };
+  await supabase.from('user_category_progress').upsert({
+    user_id: user.id,
+    category_id: categoryId,
+    correct: p.correct,
+    total: p.total,
+    last_practiced_at: new Date().toISOString()
+  }, { onConflict: 'user_id,category_id' });
+}
+
+const XP_MILESTONES = [200, 500, 1000, 2000, 3500, 5000, 10000];
+const DIFFICULTY_XP = { easy: 12, medium: 20, hard: 28, mixed: 18 };
 
 // ── Problem Bank ────────────────────────────────────────────
 
@@ -1042,19 +1135,185 @@ function genMultiStepProfit() {
   };
 }
 
-// ── Question Pools ─────────────────────────────────────────
-const POOLS = {
-  1: [genTimesTable, genLargeMultiply, genFractionDecimal, genPercentOf, genTimesTable, genPercentOf],
-  2: [genPctChange, genGrossMargin, genContributionMargin, genProfit, genMarkupVsMargin, genPctChange],
-  3: [genBreakEven, genPayback, genRule72, genNPVPerpetuity, genMarketShare, genROI],
-  4: [genCAGR, genMarketSizing, genLTV, genNPVGrowth, genMultiStepProfit]
+// ── Catalog (aligned with case_interview_math.md master index) ──
+const CATEGORIES = {
+  profitability: {
+    rank: 1, name: 'Profitability', difficulty: 'mixed', difficultyLabel: 'Easy–Hard',
+    desc: 'Revenue − cost, segments, contribution.',
+    generators: [genProfit, genMultiStepProfit, genGrossMargin, genContributionMargin]
+  },
+  pct_margins: {
+    rank: 2, name: 'Percentage change & margins', difficulty: 'easy', difficultyLabel: 'Easy',
+    desc: '% change, markup vs margin.',
+    generators: [genPctChange, genMarkupVsMargin]
+  },
+  break_even: {
+    rank: 3, name: 'Break-even', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'Units to cover fixed costs.',
+    generators: [genBreakEven]
+  },
+  market_sizing: {
+    rank: 4, name: 'Market sizing', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'Top-down / bottom-up estimates.',
+    generators: [genMarketSizing]
+  },
+  revenue_decomposition: {
+    rank: 5, name: 'Revenue (P × Q)', difficulty: 'medium', difficultyLabel: 'Easy',
+    desc: 'Price × volume across lines.',
+    generators: [genProfit, genMultiStepProfit, genGrossMargin]
+  },
+  cost_decomposition: {
+    rank: 6, name: 'Cost (fixed + variable)', difficulty: 'medium', difficultyLabel: 'Easy',
+    desc: 'Variable vs fixed, contribution.',
+    generators: [genContributionMargin, genProfit]
+  },
+  npv: {
+    rank: 7, name: 'NPV & perpetuity', difficulty: 'hard', difficultyLabel: 'Medium–Hard',
+    desc: 'Discounting, growing perpetuity.',
+    generators: [genNPVPerpetuity, genNPVGrowth]
+  },
+  roi_payback: {
+    rank: 8, name: 'ROI & payback', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'Return on investment, payback period.',
+    generators: [genROI, genPayback]
+  },
+  cagr: {
+    rank: 9, name: 'CAGR & growth', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'Compound annual growth.',
+    generators: [genCAGR]
+  },
+  market_share: {
+    rank: 10, name: 'Market share', difficulty: 'easy', difficultyLabel: 'Easy',
+    desc: 'Share of market calculations.',
+    generators: [genMarketShare]
+  },
+  ma_synergies: {
+    rank: 11, name: 'M&A / synergies', difficulty: 'hard', difficultyLabel: 'Hard',
+    desc: 'Valuation-style combos (proxy drills).',
+    generators: [genMultiStepProfit, genNPVPerpetuity, genROI]
+  },
+  pricing: {
+    rank: 12, name: 'Pricing', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'Margins, markup, contribution.',
+    generators: [genMarkupVsMargin, genContributionMargin, genProfit]
+  },
+  operations: {
+    rank: 13, name: 'Operations & throughput', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'Capacity, payback, break-even style.',
+    generators: [genBreakEven, genPayback, genROI]
+  },
+  subscription_ltv: {
+    rank: 14, name: 'Subscription / LTV / CAC', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'LTV, subscription economics.',
+    generators: [genLTV]
+  },
+  rule_of_72: {
+    rank: 15, name: 'Rule of 72', difficulty: 'easy', difficultyLabel: 'Easy',
+    desc: 'Doubling time and implied return.',
+    generators: [genRule72]
+  },
+  inventory_turns: {
+    rank: 16, name: 'Inventory turns / days', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'Turns and working capital (proxy drills).',
+    generators: [genROI, genPctChange]
+  },
+  sensitivity: {
+    rank: 17, name: 'Sensitivity analysis', difficulty: 'hard', difficultyLabel: 'Hard',
+    desc: 'NPV sensitivity to growth / rate.',
+    generators: [genNPVGrowth, genNPVPerpetuity]
+  },
+  load_factor: {
+    rank: 18, name: 'Load factor (airlines)', difficulty: 'easy', difficultyLabel: 'Easy',
+    desc: 'Utilization-style estimates (proxy drills).',
+    generators: [genMarketSizing, genMarketShare]
+  },
+  pharma_sizing: {
+    rank: 19, name: 'Pharma / funnel sizing', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'Population funnel to revenue.',
+    generators: [genMarketSizing]
+  },
+  pe_ebitda: {
+    rank: 20, name: 'PE / EBITDA multiples', difficulty: 'hard', difficultyLabel: 'Hard',
+    desc: 'Multiple-based valuation (proxy drills).',
+    generators: [genNPVPerpetuity, genROI, genProfit]
+  },
+  mental_math: {
+    rank: 21, name: 'Mental math', difficulty: 'easy', difficultyLabel: 'Easy',
+    desc: 'Foundation: multiply, %, fractions.',
+    generators: [genTimesTable, genLargeMultiply, genFractionDecimal, genPercentOf]
+  }
 };
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderCatalog() {
+  const grid = document.getElementById('catalogGrid');
+  if (!grid) return;
+  const sorted = Object.keys(CATEGORIES).sort((a, b) => CATEGORIES[a].rank - CATEGORIES[b].rank);
+  grid.innerHTML = sorted.map(id => {
+    const c = CATEGORIES[id];
+    const p = STATE.categoryProgress[id] || { correct: 0, total: 0 };
+    const stat = p.total > 0 ? `${p.correct}/${p.total} correct` : 'Not started';
+    return `<button type="button" class="catalog-card" data-cat="${escapeHtml(id)}">
+      <span class="catalog-rank">#${c.rank} · ${escapeHtml(c.difficultyLabel)}</span>
+      <span class="catalog-name">${escapeHtml(c.name)}</span>
+      <span class="catalog-meta">${escapeHtml(stat)}</span>
+    </button>`;
+  }).join('');
+  grid.querySelectorAll('.catalog-card').forEach(btn => {
+    btn.addEventListener('click', () => startDrill(btn.getAttribute('data-cat')));
+  });
+}
+
+function startDrill(categoryId) {
+  STATE.view = 'drill';
+  STATE.activeCategory = categoryId;
+  document.getElementById('catalogView').style.display = 'none';
+  document.getElementById('drillView').style.display = 'block';
+  const title = categoryId ? CATEGORIES[categoryId].name : 'Random mix';
+  document.getElementById('drillTitle').textContent = title;
+  updatePracticeBadge();
+  loadQuestion();
+}
+
+function backToCatalog() {
+  clearInterval(STATE.timerInterval);
+  STATE.timerInterval = null;
+  STATE.view = 'catalog';
+  STATE.activeCategory = null;
+  document.getElementById('drillView').style.display = 'none';
+  document.getElementById('catalogView').style.display = 'block';
+  document.getElementById('questionCard').className = 'question-card';
+  document.getElementById('feedbackPanel').className = 'feedback-panel';
+  document.getElementById('nextBtn').style.display = 'none';
+  updatePracticeBadge();
+  renderCatalog();
+}
+
+function updatePracticeBadge() {
+  const el = document.getElementById('levelBadge');
+  if (STATE.view === 'catalog') {
+    el.textContent = 'Roadmap';
+  } else {
+    el.textContent = STATE.activeCategory ? CATEGORIES[STATE.activeCategory].name : 'Random mix';
+  }
+}
 
 // ── Core Logic ─────────────────────────────────────────────
 
-function generateQuestion(level) {
-  const gen = pick(POOLS[level]);
-  return gen();
+function generateQuestion() {
+  let catId = STATE.activeCategory;
+  if (!catId) {
+    catId = pick(Object.keys(CATEGORIES));
+  }
+  const cat = CATEGORIES[catId];
+  const gen = pick(cat.generators);
+  const q = gen();
+  q.categoryId = catId;
+  q.difficultyKey = cat.difficulty;
+  return q;
 }
 
 function startTimer() {
@@ -1072,7 +1331,7 @@ function startTimer() {
 
 function loadQuestion() {
   STATE.answered = false;
-  STATE.currentQ = generateQuestion(STATE.activeLevel);
+  STATE.currentQ = generateQuestion();
   const q = STATE.currentQ;
 
   document.getElementById('questionText').textContent = q.question;
@@ -1122,12 +1381,13 @@ function submitAnswer() {
     STATE.correct++;
     STATE.streak++;
 
-    let baseXP = LEVEL_XP_AWARD[STATE.activeLevel];
+    const baseXP = DIFFICULTY_XP[q.difficultyKey] || 18;
     let bonus = STATE.streak >= 3 ? Math.floor(baseXP * 0.5) : 0;
     let totalXP = baseXP + bonus;
-    const prevLevel = STATE.unlockedLevel;
+    const prevXp = STATE.xp;
 
     STATE.xp += totalXP;
+    bumpCategoryProgress(q.categoryId, true);
     updateXP(totalXP, bonus > 0);
 
     panel.className = 'feedback-panel show correct';
@@ -1141,15 +1401,14 @@ function submitAnswer() {
       document.getElementById('streakBanner').className = 'streak-banner show';
     }
 
-    // Level up check
-    if (STATE.unlockedLevel < 4 && STATE.xp >= LEVEL_XP[STATE.unlockedLevel + 1]) {
-      const newLevel = STATE.unlockedLevel + 1;
-      STATE.unlockedLevel = newLevel;
-      unlockLevel(newLevel);
+    const newlyCrossed = XP_MILESTONES.filter(t => prevXp < t && STATE.xp >= t);
+    if (newlyCrossed.length) {
+      showMilestoneModal(Math.max(...newlyCrossed));
     }
 
   } else {
     STATE.streak = 0;
+    bumpCategoryProgress(q.categoryId, false);
     panel.className = 'feedback-panel show wrong';
     document.getElementById('feedbackIcon').textContent = '✗';
     document.getElementById('feedbackTitle').textContent = `Correct answer: ${q.answer.toLocaleString()}`;
@@ -1162,6 +1421,15 @@ function submitAnswer() {
   document.getElementById('nextBtn').style.display = 'block';
   updateStats();
   saveProgress();
+  if (q.categoryId) saveCategoryProgressRow(q.categoryId);
+}
+
+function bumpCategoryProgress(categoryId, wasCorrect) {
+  if (!categoryId) return;
+  const p = STATE.categoryProgress[categoryId] || { correct: 0, total: 0 };
+  p.total++;
+  if (wasCorrect) p.correct++;
+  STATE.categoryProgress[categoryId] = p;
 }
 
 function skipQuestion() {
@@ -1172,6 +1440,7 @@ function skipQuestion() {
   clearInterval(STATE.timerInterval);
 
   const q = STATE.currentQ;
+  bumpCategoryProgress(q.categoryId, false);
   const panel = document.getElementById('feedbackPanel');
   panel.className = 'feedback-panel show wrong';
   document.getElementById('feedbackIcon').textContent = '→';
@@ -1182,66 +1451,53 @@ function skipQuestion() {
   document.getElementById('nextBtn').style.display = 'block';
   updateStats();
   saveProgress();
+  if (q.categoryId) saveCategoryProgressRow(q.categoryId);
 }
 
 function nextQuestion() {
   loadQuestion();
 }
 
-// ── XP & Levels ────────────────────────────────────────────
+// ── XP & milestones ─────────────────────────────────────────
+
+function getXPBarSegment(xp) {
+  const milestones = [0, 200, 500, 1000, 2000, 3500, 5000, 10000];
+  let low = 0;
+  let high = 200;
+  for (let i = 0; i < milestones.length - 1; i++) {
+    if (xp >= milestones[i] && xp < milestones[i + 1]) {
+      low = milestones[i];
+      high = milestones[i + 1];
+      break;
+    }
+  }
+  if (xp >= milestones[milestones.length - 1]) {
+    low = milestones[milestones.length - 1];
+    high = low + 2500;
+  }
+  const span = Math.max(1, high - low);
+  const pct = Math.min(100, Math.round(((xp - low) / span) * 100));
+  return { pct, high, low };
+}
 
 function updateXP(gained, streakBonus) {
   const xp = STATE.xp;
-  const curLevel = STATE.unlockedLevel;
-  const curBase = LEVEL_XP[curLevel];
-  const nextBase = curLevel < 4 ? LEVEL_XP[curLevel + 1] : LEVEL_XP[4] + 500;
-  const pct = Math.min(100, Math.round((xp - curBase) / (nextBase - curBase) * 100));
-
+  const { pct, high } = getXPBarSegment(xp);
   document.getElementById('xpBar').style.width = pct + '%';
-  document.getElementById('xpLabel').textContent = `${xp} XP`;
-  document.getElementById('xpNext').textContent = curLevel < 4
-    ? `Next unlock: ${LEVEL_XP[curLevel+1]} XP`
-    : 'All levels unlocked! 🏆';
+  document.getElementById('xpLabel').textContent = `${xp.toLocaleString()} XP`;
+  const remain = Math.max(0, high - xp);
+  document.getElementById('xpNext').textContent =
+    xp >= 10000 ? 'Outstanding — keep building mastery' : `${remain.toLocaleString()} XP to ${high.toLocaleString()} milestone`;
   document.getElementById('statXP').textContent = xp.toLocaleString();
 }
 
-function unlockLevel(level) {
-  const tab = document.getElementById(`tab-${level}`);
-  tab.classList.remove('locked-tab');
-
-  const modal = document.getElementById('levelUpModal');
-  document.getElementById('modalLevelName').textContent = `Level ${level} — ${LEVEL_NAMES[level]}`;
-  modal.className = 'modal-overlay show';
+function showMilestoneModal(threshold) {
+  document.getElementById('modalMilestoneText').textContent = `You passed ${threshold.toLocaleString()} total XP`;
+  document.getElementById('milestoneModal').className = 'modal-overlay show';
 }
 
-function closeModal() {
-  document.getElementById('levelUpModal').className = 'modal-overlay';
-}
-
-function switchLevel(level) {
-  if (level > STATE.unlockedLevel) {
-    // Show locked message
-    document.getElementById('questionCard').style.display = 'none';
-    const locked = document.getElementById('lockedCard');
-    locked.className = 'locked-card show';
-    document.getElementById('lockedTitle').textContent = `Level ${level} Locked`;
-    const needed = LEVEL_XP[level];
-    const names = ['','Mental Math','Business Arithmetic','Case Math Core','Advanced Case Math'];
-    document.getElementById('lockedDesc').textContent = `Earn ${needed} XP to unlock ${names[level]}`;
-    return;
-  }
-
-  document.getElementById('questionCard').style.display = 'block';
-  document.getElementById('lockedCard').className = 'locked-card';
-
-  document.querySelectorAll('.level-tab').forEach((t,i) => {
-    t.classList.toggle('active', i+1 === level);
-  });
-  STATE.activeLevel = level;
-  clearInterval(STATE.timerInterval);
-  updateLevelBadge();
-  saveProgress();
-  loadQuestion();
+function closeMilestoneModal() {
+  document.getElementById('milestoneModal').className = 'modal-overlay';
 }
 
 function updateStats() {
@@ -1250,7 +1506,6 @@ function updateStats() {
   document.getElementById('statAccuracy').textContent = STATE.total > 0 ? acc + '%' : '—';
   document.getElementById('statCorrect').textContent = STATE.correct;
   updateXP(0, false);
-  syncLevelTabs();
 }
 
 // ── Keyboard ───────────────────────────────────────────────
@@ -1263,36 +1518,26 @@ document.getElementById('answerInput').addEventListener('keydown', (e) => {
 
 // ── Init ───────────────────────────────────────────────────
 async function init() {
+  STATE.view = 'catalog';
+  document.getElementById('catalogView').style.display = 'block';
+  document.getElementById('drillView').style.display = 'none';
   updateAuthUI(null);
   if (supabase) {
     supabase.auth.onAuthStateChange((event, session) => {
       updateAuthUI(session?.user ?? null);
-      if (event === 'SIGNED_IN' && session) loadProgress().then(() => { updateStats(); updateLevelBadge(); });
+      if (event === 'SIGNED_IN' && session) {
+        loadProgress().then(() => { updateStats(); renderCatalog(); });
+      }
     });
     const { data: { session } } = await supabase.auth.getSession();
     updateAuthUI(session?.user ?? null);
     if (session) {
       await loadProgress();
-      syncLevelTabs();
     }
-  } else {
-    syncLevelTabs();
   }
-  updateLevelBadge();
+  updatePracticeBadge();
   updateStats();
-  loadQuestion();
-}
-
-function updateLevelBadge() {
-  document.getElementById('levelBadge').textContent = `Level ${STATE.activeLevel} — ${LEVEL_NAMES[STATE.activeLevel]}`;
-}
-
-function syncLevelTabs() {
-  document.querySelectorAll('.level-tab').forEach((t, i) => {
-    const level = i + 1;
-    t.classList.toggle('active', level === STATE.activeLevel);
-    t.classList.toggle('locked-tab', level > STATE.unlockedLevel);
-  });
+  renderCatalog();
 }
 
 init();

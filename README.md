@@ -40,7 +40,9 @@ Source: [Hacking the Case Interview](https://www.hackingthecaseinterview.com/pag
 
 1. **Supabase project** — Create a project at [supabase.com](https://supabase.com).
 
-2. **Apply migration** — In Supabase Dashboard → SQL Editor, run the SQL in `supabase/migrations/20250323000000_create_user_progress.sql`.
+2. **Apply migrations** — In Supabase Dashboard → SQL Editor, run (in order):
+   - `supabase/migrations/20250323000000_create_user_progress.sql`
+   - `supabase/migrations/20250323100000_create_user_category_progress.sql` (per-topic stats for the roadmap catalog)
 
 3. **Disable email confirmation** — Dashboard → Authentication → Providers → Email → turn **Confirm email** OFF (so users can sign up and use the app immediately).
 
