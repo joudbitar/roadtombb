@@ -1293,111 +1293,134 @@ const CATALOG_SECTIONS = [
   }
 ];
 
+const DEFAULT_TARGET = 20;
+
 const CATEGORIES = {
   mental_math: {
     rank: 1, name: 'Mental math', difficulty: 'easy', difficultyLabel: 'Easy',
     desc: 'Foundation: multiply, %, fractions — use with every topic.',
-    generators: [genTimesTable, genLargeMultiply, genFractionDecimal, genPercentOf]
+    generators: [genTimesTable, genLargeMultiply, genFractionDecimal, genPercentOf],
+    target: 20
   },
   profitability: {
     rank: 2, name: 'Profitability', difficulty: 'mixed', difficultyLabel: 'Easy–Hard',
     desc: 'Revenue − cost, segments, contribution.',
-    generators: [genProfit, genMultiStepProfit, genGrossMargin, genContributionMargin]
+    generators: [genProfit, genMultiStepProfit, genGrossMargin, genContributionMargin],
+    target: 20
   },
   revenue_decomposition: {
     rank: 3, name: 'Revenue (P × Q)', difficulty: 'medium', difficultyLabel: 'Easy',
     desc: 'Price × volume across lines.',
-    generators: [genProfit, genMultiStepProfit, genGrossMargin]
+    generators: [genProfit, genMultiStepProfit, genGrossMargin],
+    target: 20
   },
   cost_decomposition: {
     rank: 4, name: 'Cost (fixed + variable)', difficulty: 'medium', difficultyLabel: 'Easy',
     desc: 'Variable vs fixed, contribution.',
-    generators: [genContributionMargin, genProfit]
+    generators: [genContributionMargin, genProfit],
+    target: 20
   },
   pct_margins: {
     rank: 5, name: 'Percentage change & margins', difficulty: 'easy', difficultyLabel: 'Easy',
     desc: '% change, markup vs margin.',
-    generators: [genPctChange, genMarkupVsMargin]
+    generators: [genPctChange, genMarkupVsMargin],
+    target: 20
   },
   market_share: {
     rank: 6, name: 'Market share', difficulty: 'easy', difficultyLabel: 'Easy',
     desc: 'Share of market calculations.',
-    generators: [genMarketShare]
+    generators: [genMarketShare],
+    target: 20
   },
   rule_of_72: {
     rank: 7, name: 'Rule of 72', difficulty: 'easy', difficultyLabel: 'Easy',
     desc: 'Doubling time and implied return.',
-    generators: [genRule72]
+    generators: [genRule72],
+    target: 20
   },
   break_even: {
     rank: 8, name: 'Break-even', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Units to cover fixed costs.',
-    generators: [genBreakEven]
+    generators: [genBreakEven],
+    target: 20
   },
   cagr: {
     rank: 9, name: 'CAGR & growth', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Compound annual growth.',
-    generators: [genCAGR]
+    generators: [genCAGR],
+    target: 20
   },
   roi_payback: {
     rank: 10, name: 'ROI & payback', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Return on investment, payback period.',
-    generators: [genROI, genPayback]
+    generators: [genROI, genPayback],
+    target: 20
   },
   npv: {
     rank: 11, name: 'NPV & perpetuity', difficulty: 'hard', difficultyLabel: 'Medium–Hard',
     desc: 'Discounting, growing perpetuity.',
-    generators: [genNPVPerpetuity, genNPVGrowth]
+    generators: [genNPVPerpetuity, genNPVGrowth],
+    target: 20
   },
   market_sizing: {
     rank: 12, name: 'Market sizing', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Top-down / bottom-up estimates.',
-    generators: [genMarketSizing]
+    generators: [genMarketSizing],
+    target: 20
   },
   pricing: {
     rank: 13, name: 'Pricing', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Margins, markup, contribution.',
-    generators: [genMarkupVsMargin, genContributionMargin, genProfit]
+    generators: [genMarkupVsMargin, genContributionMargin, genProfit],
+    target: 20
   },
   operations: {
     rank: 14, name: 'Operations & throughput', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Capacity, payback, break-even style.',
-    generators: [genBreakEven, genPayback, genROI]
+    generators: [genBreakEven, genPayback, genROI],
+    target: 20
   },
   subscription_ltv: {
     rank: 15, name: 'Subscription / LTV / CAC', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'LTV, subscription economics.',
-    generators: [genLTV]
+    generators: [genLTV],
+    target: 20
   },
   inventory_turns: {
     rank: 16, name: 'Inventory turns / days', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Turns and working capital (proxy drills).',
-    generators: [genROI, genPctChange]
+    generators: [genROI, genPctChange],
+    target: 20
   },
   load_factor: {
     rank: 17, name: 'Load factor (airlines)', difficulty: 'easy', difficultyLabel: 'Easy',
     desc: 'Utilization-style estimates (proxy drills).',
-    generators: [genMarketSizing, genMarketShare]
+    generators: [genMarketSizing, genMarketShare],
+    target: 20
   },
   pharma_sizing: {
     rank: 18, name: 'Pharma / funnel sizing', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Population funnel to revenue.',
-    generators: [genMarketSizing]
+    generators: [genMarketSizing],
+    target: 20
   },
   ma_synergies: {
     rank: 19, name: 'M&A / synergies', difficulty: 'hard', difficultyLabel: 'Hard',
     desc: 'Valuation-style combos (proxy drills).',
-    generators: [genMultiStepProfit, genNPVPerpetuity, genROI]
+    generators: [genMultiStepProfit, genNPVPerpetuity, genROI],
+    target: 20
   },
   pe_ebitda: {
     rank: 20, name: 'PE / EBITDA multiples', difficulty: 'hard', difficultyLabel: 'Hard',
     desc: 'Multiple-based valuation (proxy drills).',
-    generators: [genNPVPerpetuity, genROI, genProfit]
+    generators: [genNPVPerpetuity, genROI, genProfit],
+    target: 20
   },
   sensitivity: {
     rank: 21, name: 'Sensitivity analysis', difficulty: 'hard', difficultyLabel: 'Hard',
     desc: 'NPV sensitivity to growth / rate.',
-    generators: [genNPVGrowth, genNPVPerpetuity]
+    generators: [genNPVGrowth, genNPVPerpetuity],
+    target: 20
   }
 };
 
@@ -1413,7 +1436,8 @@ function renderCatalog() {
       const c = CATEGORIES[id];
       if (!c) return '';
       const p = STATE.categoryProgress[id] || { correct: 0, total: 0 };
-      const progress = `${p.correct} / ${p.total}`;
+      const target = c.target ?? DEFAULT_TARGET;
+      const progress = `${p.total} / ${target}`;
       return `<button type="button" class="catalog-card" data-cat="${escapeHtml(id)}">
       <span class="catalog-rank">#${c.rank} · ${escapeHtml(c.difficultyLabel)}</span>
       <span class="catalog-name">${escapeHtml(c.name)}</span>
