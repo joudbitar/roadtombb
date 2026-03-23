@@ -333,6 +333,29 @@
     padding: 14px 20px;
     font-size: 15px;
   }
+  .catalog-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .catalog-section-head {
+    margin-bottom: 12px;
+  }
+  .catalog-section-title {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    margin: 0 0 4px 0;
+  }
+  .catalog-section-blurb {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.45;
+    opacity: 0.92;
+  }
   .catalog-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -506,7 +529,7 @@
       <button class="btn-signout" onclick="signOut()">Sign out</button>
     </div>
   </div>
-  <div class="level-badge" id="levelBadge">Roadmap</div>
+  <div class="level-badge" id="levelBadge">Topics</div>
 </div>
 
 <!-- Auth banner (guests) -->
@@ -561,10 +584,10 @@
   </div>
 </div>
 
-<!-- Catalog (roadmap) -->
+<!-- Catalog (sequential topics) -->
 <div class="catalog-view" id="catalogView">
-  <h2 class="catalog-heading">Math roadmap</h2>
-  <p class="catalog-sub">Pick a topic from the case math guide (same types as in our research doc). Everything is unlocked — practice what you need.</p>
+  <h2 class="catalog-heading">Case math</h2>
+  <p class="catalog-sub">Sequential categories from foundation through deal math (same types as in our research doc). Everything is unlocked — practice what you need.</p>
   <button type="button" class="btn btn-primary catalog-random-btn" id="catalogRandomBtn">Random mix (all topics)</button>
   <div class="catalog-grid" id="catalogGrid"></div>
 </div>
@@ -572,7 +595,7 @@
 <!-- Drill -->
 <div class="drill-view" id="drillView" style="display:none">
   <div class="drill-header">
-    <button type="button" class="btn btn-skip drill-back" onclick="backToCatalog()">← Roadmap</button>
+    <button type="button" class="btn btn-skip drill-back" onclick="backToCatalog()">← Topics</button>
     <span class="drill-title" id="drillTitle">Practice</span>
   </div>
 
@@ -1134,112 +1157,150 @@ function genMultiStepProfit() {
   };
 }
 
-// ── Catalog (aligned with case_interview_math.md master index) ──
+// ── Catalog (sequential sections: foundation → core → … → deal math) ──
+const CATALOG_SECTIONS = [
+  {
+    title: 'Foundation',
+    blurb: 'Mental math underpins every case — treat it as a first-class skill alongside the topics below.',
+    categoryIds: ['mental_math']
+  },
+  {
+    title: 'Core mechanics',
+    blurb: 'Profitability frame, revenue & cost, margins, share, and compounding shortcuts.',
+    categoryIds: ['profitability', 'revenue_decomposition', 'cost_decomposition', 'pct_margins', 'market_share', 'rule_of_72']
+  },
+  {
+    title: 'Classic case math',
+    blurb: 'Breakeven, growth rates, and return metrics.',
+    categoryIds: ['break_even', 'cagr', 'roi_payback']
+  },
+  {
+    title: 'Time value of money',
+    blurb: 'Discounting and perpetuities.',
+    categoryIds: ['npv']
+  },
+  {
+    title: 'Strategy & operations',
+    blurb: 'Sizing, pricing, throughput, subscription economics, and working capital.',
+    categoryIds: ['market_sizing', 'pricing', 'operations', 'subscription_ltv', 'inventory_turns']
+  },
+  {
+    title: 'Sector patterns',
+    blurb: 'Industry-shaped sizing and utilization.',
+    categoryIds: ['load_factor', 'pharma_sizing']
+  },
+  {
+    title: 'Advanced / deal math',
+    blurb: 'M&A-style combinations, multiples, and sensitivity.',
+    categoryIds: ['ma_synergies', 'pe_ebitda', 'sensitivity']
+  }
+];
+
 const CATEGORIES = {
+  mental_math: {
+    rank: 1, name: 'Mental math', difficulty: 'easy', difficultyLabel: 'Easy',
+    desc: 'Foundation: multiply, %, fractions — use with every topic.',
+    generators: [genTimesTable, genLargeMultiply, genFractionDecimal, genPercentOf]
+  },
   profitability: {
-    rank: 1, name: 'Profitability', difficulty: 'mixed', difficultyLabel: 'Easy–Hard',
+    rank: 2, name: 'Profitability', difficulty: 'mixed', difficultyLabel: 'Easy–Hard',
     desc: 'Revenue − cost, segments, contribution.',
     generators: [genProfit, genMultiStepProfit, genGrossMargin, genContributionMargin]
   },
-  pct_margins: {
-    rank: 2, name: 'Percentage change & margins', difficulty: 'easy', difficultyLabel: 'Easy',
-    desc: '% change, markup vs margin.',
-    generators: [genPctChange, genMarkupVsMargin]
-  },
-  break_even: {
-    rank: 3, name: 'Break-even', difficulty: 'medium', difficultyLabel: 'Medium',
-    desc: 'Units to cover fixed costs.',
-    generators: [genBreakEven]
-  },
-  market_sizing: {
-    rank: 4, name: 'Market sizing', difficulty: 'medium', difficultyLabel: 'Medium',
-    desc: 'Top-down / bottom-up estimates.',
-    generators: [genMarketSizing]
-  },
   revenue_decomposition: {
-    rank: 5, name: 'Revenue (P × Q)', difficulty: 'medium', difficultyLabel: 'Easy',
+    rank: 3, name: 'Revenue (P × Q)', difficulty: 'medium', difficultyLabel: 'Easy',
     desc: 'Price × volume across lines.',
     generators: [genProfit, genMultiStepProfit, genGrossMargin]
   },
   cost_decomposition: {
-    rank: 6, name: 'Cost (fixed + variable)', difficulty: 'medium', difficultyLabel: 'Easy',
+    rank: 4, name: 'Cost (fixed + variable)', difficulty: 'medium', difficultyLabel: 'Easy',
     desc: 'Variable vs fixed, contribution.',
     generators: [genContributionMargin, genProfit]
   },
-  npv: {
-    rank: 7, name: 'NPV & perpetuity', difficulty: 'hard', difficultyLabel: 'Medium–Hard',
-    desc: 'Discounting, growing perpetuity.',
-    generators: [genNPVPerpetuity, genNPVGrowth]
+  pct_margins: {
+    rank: 5, name: 'Percentage change & margins', difficulty: 'easy', difficultyLabel: 'Easy',
+    desc: '% change, markup vs margin.',
+    generators: [genPctChange, genMarkupVsMargin]
   },
-  roi_payback: {
-    rank: 8, name: 'ROI & payback', difficulty: 'medium', difficultyLabel: 'Medium',
-    desc: 'Return on investment, payback period.',
-    generators: [genROI, genPayback]
+  market_share: {
+    rank: 6, name: 'Market share', difficulty: 'easy', difficultyLabel: 'Easy',
+    desc: 'Share of market calculations.',
+    generators: [genMarketShare]
+  },
+  rule_of_72: {
+    rank: 7, name: 'Rule of 72', difficulty: 'easy', difficultyLabel: 'Easy',
+    desc: 'Doubling time and implied return.',
+    generators: [genRule72]
+  },
+  break_even: {
+    rank: 8, name: 'Break-even', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'Units to cover fixed costs.',
+    generators: [genBreakEven]
   },
   cagr: {
     rank: 9, name: 'CAGR & growth', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Compound annual growth.',
     generators: [genCAGR]
   },
-  market_share: {
-    rank: 10, name: 'Market share', difficulty: 'easy', difficultyLabel: 'Easy',
-    desc: 'Share of market calculations.',
-    generators: [genMarketShare]
+  roi_payback: {
+    rank: 10, name: 'ROI & payback', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'Return on investment, payback period.',
+    generators: [genROI, genPayback]
   },
-  ma_synergies: {
-    rank: 11, name: 'M&A / synergies', difficulty: 'hard', difficultyLabel: 'Hard',
-    desc: 'Valuation-style combos (proxy drills).',
-    generators: [genMultiStepProfit, genNPVPerpetuity, genROI]
+  npv: {
+    rank: 11, name: 'NPV & perpetuity', difficulty: 'hard', difficultyLabel: 'Medium–Hard',
+    desc: 'Discounting, growing perpetuity.',
+    generators: [genNPVPerpetuity, genNPVGrowth]
+  },
+  market_sizing: {
+    rank: 12, name: 'Market sizing', difficulty: 'medium', difficultyLabel: 'Medium',
+    desc: 'Top-down / bottom-up estimates.',
+    generators: [genMarketSizing]
   },
   pricing: {
-    rank: 12, name: 'Pricing', difficulty: 'medium', difficultyLabel: 'Medium',
+    rank: 13, name: 'Pricing', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Margins, markup, contribution.',
     generators: [genMarkupVsMargin, genContributionMargin, genProfit]
   },
   operations: {
-    rank: 13, name: 'Operations & throughput', difficulty: 'medium', difficultyLabel: 'Medium',
+    rank: 14, name: 'Operations & throughput', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Capacity, payback, break-even style.',
     generators: [genBreakEven, genPayback, genROI]
   },
   subscription_ltv: {
-    rank: 14, name: 'Subscription / LTV / CAC', difficulty: 'medium', difficultyLabel: 'Medium',
+    rank: 15, name: 'Subscription / LTV / CAC', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'LTV, subscription economics.',
     generators: [genLTV]
-  },
-  rule_of_72: {
-    rank: 15, name: 'Rule of 72', difficulty: 'easy', difficultyLabel: 'Easy',
-    desc: 'Doubling time and implied return.',
-    generators: [genRule72]
   },
   inventory_turns: {
     rank: 16, name: 'Inventory turns / days', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Turns and working capital (proxy drills).',
     generators: [genROI, genPctChange]
   },
-  sensitivity: {
-    rank: 17, name: 'Sensitivity analysis', difficulty: 'hard', difficultyLabel: 'Hard',
-    desc: 'NPV sensitivity to growth / rate.',
-    generators: [genNPVGrowth, genNPVPerpetuity]
-  },
   load_factor: {
-    rank: 18, name: 'Load factor (airlines)', difficulty: 'easy', difficultyLabel: 'Easy',
+    rank: 17, name: 'Load factor (airlines)', difficulty: 'easy', difficultyLabel: 'Easy',
     desc: 'Utilization-style estimates (proxy drills).',
     generators: [genMarketSizing, genMarketShare]
   },
   pharma_sizing: {
-    rank: 19, name: 'Pharma / funnel sizing', difficulty: 'medium', difficultyLabel: 'Medium',
+    rank: 18, name: 'Pharma / funnel sizing', difficulty: 'medium', difficultyLabel: 'Medium',
     desc: 'Population funnel to revenue.',
     generators: [genMarketSizing]
+  },
+  ma_synergies: {
+    rank: 19, name: 'M&A / synergies', difficulty: 'hard', difficultyLabel: 'Hard',
+    desc: 'Valuation-style combos (proxy drills).',
+    generators: [genMultiStepProfit, genNPVPerpetuity, genROI]
   },
   pe_ebitda: {
     rank: 20, name: 'PE / EBITDA multiples', difficulty: 'hard', difficultyLabel: 'Hard',
     desc: 'Multiple-based valuation (proxy drills).',
     generators: [genNPVPerpetuity, genROI, genProfit]
   },
-  mental_math: {
-    rank: 21, name: 'Mental math', difficulty: 'easy', difficultyLabel: 'Easy',
-    desc: 'Foundation: multiply, %, fractions.',
-    generators: [genTimesTable, genLargeMultiply, genFractionDecimal, genPercentOf]
+  sensitivity: {
+    rank: 21, name: 'Sensitivity analysis', difficulty: 'hard', difficultyLabel: 'Hard',
+    desc: 'NPV sensitivity to growth / rate.',
+    generators: [genNPVGrowth, genNPVPerpetuity]
   }
 };
 
@@ -1250,17 +1311,27 @@ function escapeHtml(str) {
 function renderCatalog() {
   const grid = document.getElementById('catalogGrid');
   if (!grid) return;
-  const sorted = Object.keys(CATEGORIES).sort((a, b) => CATEGORIES[a].rank - CATEGORIES[b].rank);
-  grid.innerHTML = sorted.map(id => {
-    const c = CATEGORIES[id];
-    const p = STATE.categoryProgress[id] || { correct: 0, total: 0 };
-    const stat = p.total > 0 ? `${p.correct}/${p.total} correct` : 'Not started';
-    return `<button type="button" class="catalog-card" data-cat="${escapeHtml(id)}">
+  const sectionsHtml = CATALOG_SECTIONS.map(sec => {
+    const cards = sec.categoryIds.map(id => {
+      const c = CATEGORIES[id];
+      if (!c) return '';
+      const p = STATE.categoryProgress[id] || { correct: 0, total: 0 };
+      const stat = p.total > 0 ? `${p.correct}/${p.total} correct` : 'Not started';
+      return `<button type="button" class="catalog-card" data-cat="${escapeHtml(id)}">
       <span class="catalog-rank">#${c.rank} · ${escapeHtml(c.difficultyLabel)}</span>
       <span class="catalog-name">${escapeHtml(c.name)}</span>
       <span class="catalog-meta">${escapeHtml(stat)}</span>
     </button>`;
+    }).join('');
+    return `<div class="catalog-section">
+      <div class="catalog-section-head">
+        <h3 class="catalog-section-title">${escapeHtml(sec.title)}</h3>
+        <p class="catalog-section-blurb">${escapeHtml(sec.blurb)}</p>
+      </div>
+      <div class="catalog-grid">${cards}</div>
+    </div>`;
   }).join('');
+  grid.innerHTML = `<div class="catalog-sections">${sectionsHtml}</div>`;
   grid.querySelectorAll('.catalog-card').forEach(btn => {
     btn.addEventListener('click', () => startDrill(btn.getAttribute('data-cat')));
   });
@@ -1294,7 +1365,7 @@ function backToCatalog() {
 function updatePracticeBadge() {
   const el = document.getElementById('levelBadge');
   if (STATE.view === 'catalog') {
-    el.textContent = 'Roadmap';
+    el.textContent = 'Topics';
   } else {
     el.textContent = STATE.activeCategory ? CATEGORIES[STATE.activeCategory].name : 'Random mix';
   }
