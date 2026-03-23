@@ -335,6 +335,96 @@
   .level-tab.locked-tab { opacity: 0.4; cursor: not-allowed; }
   .level-tab-name { font-size: 10px; margin-top: 2px; display: block; }
 
+  /* ── Auth UI ── */
+  .auth-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-auth {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    transition: all 0.2s;
+  }
+  .btn-auth:hover { border-color: var(--blue); background: var(--surface2); }
+  .user-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .user-pill .email { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .btn-signout {
+    padding: 6px 12px;
+    font-size: 11px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-signout:hover { color: var(--red); border-color: var(--red); }
+  .auth-banner {
+    width: 100%;
+    max-width: 640px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--muted);
+    display: none;
+  }
+  .auth-banner.show { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+  /* Auth modal */
+  .auth-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .auth-modal-overlay.show { display: flex; }
+  .auth-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 100%;
+    max-width: 360px;
+  }
+  .auth-modal h3 { font-size: 18px; margin-bottom: 20px; color: var(--text); }
+  .auth-form input {
+    width: 100%;
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    color: var(--text);
+    font-size: 15px;
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    font-family: 'Inter', sans-serif;
+  }
+  .auth-form input:focus { outline: none; border-color: var(--blue); }
+  .auth-form .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .auth-form .btn-row button { flex: 1; }
+  .auth-form .auth-error { font-size: 13px; color: var(--red); margin-bottom: 10px; }
+  .auth-form .auth-toggle { font-size: 13px; color: var(--muted); margin-top: 16px; }
+  .auth-form .auth-toggle a { color: var(--blue); cursor: pointer; }
+
   @media (max-width: 480px) {
     .question-text { font-size: 20px; }
     .stats-row { grid-template-columns: repeat(2, 1fr); }
@@ -347,7 +437,37 @@
 <!-- Header -->
 <div class="header">
   <div class="logo">🧮 ROAD TO MBB</div>
+  <div class="auth-area" id="authArea">
+    <button class="btn-auth" id="btnSignIn" onclick="openAuthModal()" style="display:none">Sign in</button>
+    <div class="user-pill" id="userPill" style="display:none">
+      <span class="email" id="userEmail"></span>
+      <button class="btn-signout" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
   <div class="level-badge" id="levelBadge">Level 1 — Analyst Intern</div>
+</div>
+
+<!-- Auth banner (guests) -->
+<div class="auth-banner" id="authBanner">
+  <span>Sign in to save your progress across devices</span>
+  <button class="btn-auth" onclick="openAuthModal()">Sign in</button>
+</div>
+
+<!-- Auth modal (email/password) -->
+<div class="auth-modal-overlay" id="authModal">
+  <div class="auth-modal">
+    <h3 id="authModalTitle">Sign in</h3>
+    <form class="auth-form" id="authForm" onsubmit="return submitAuth(event)">
+      <div class="auth-error" id="authError"></div>
+      <input type="email" id="authEmail" placeholder="Email" required autocomplete="email">
+      <input type="password" id="authPassword" placeholder="Password" required autocomplete="current-password">
+      <div class="btn-row">
+        <button type="button" class="btn btn-skip" onclick="closeAuthModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="authSubmit">Sign in</button>
+      </div>
+      <div class="auth-toggle" id="authToggle"></div>
+    </form>
+  </div>
 </div>
 
 <!-- XP Bar -->
@@ -430,6 +550,11 @@
   <div class="locked-desc" id="lockedDesc">Earn 200 XP to unlock Business Arithmetic</div>
 </div>
 
+<!-- Config & Supabase (config.js is optional; copy from config.example.js) -->
+<script>window.__SUPABASE_CONFIG__ = window.__SUPABASE_CONFIG__ || null;</script>
+<script src="config.js" onerror="window.__SUPABASE_CONFIG__=null"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <!-- Level Up Modal -->
 <div class="modal-overlay" id="levelUpModal">
   <div class="modal">
@@ -449,6 +574,129 @@ const STATE = {
   timerInterval: null, timerSecs: 0,
   currentQ: null, answered: false
 };
+
+// ── Supabase Auth & Persistence ─────────────────────────────
+let supabase = null;
+(function initSupabase() {
+  const cfg = window.__SUPABASE_CONFIG__;
+  const lib = window.supabase;
+  if (cfg?.url && cfg?.anonKey && lib?.createClient) {
+    supabase = lib.createClient(cfg.url, cfg.anonKey);
+  }
+})();
+
+let authMode = 'signin'; // 'signin' | 'signup'
+
+function openAuthModal() {
+  if (!supabase) return;
+  authMode = 'signin';
+  document.getElementById('authModalTitle').textContent = 'Sign in';
+  document.getElementById('authSubmit').textContent = 'Sign in';
+  document.getElementById('authToggle').innerHTML = 'No account? <a onclick="switchAuthMode(\'signup\')">Sign up</a>';
+  document.getElementById('authError').textContent = '';
+  document.getElementById('authForm').reset();
+  document.getElementById('authModal').classList.add('show');
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('show');
+}
+
+function switchAuthMode(mode) {
+  authMode = mode;
+  document.getElementById('authError').textContent = '';
+  if (mode === 'signup') {
+    document.getElementById('authModalTitle').textContent = 'Create account';
+    document.getElementById('authSubmit').textContent = 'Sign up';
+    document.getElementById('authToggle').innerHTML = 'Already have an account? <a onclick="switchAuthMode(\'signin\')">Sign in</a>';
+  } else {
+    document.getElementById('authModalTitle').textContent = 'Sign in';
+    document.getElementById('authSubmit').textContent = 'Sign in';
+    document.getElementById('authToggle').innerHTML = 'No account? <a onclick="switchAuthMode(\'signup\')">Sign up</a>';
+  }
+}
+
+async function submitAuth(e) {
+  e.preventDefault();
+  if (!supabase) return false;
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const errEl = document.getElementById('authError');
+  const btn = document.getElementById('authSubmit');
+  errEl.textContent = '';
+  btn.disabled = true;
+  try {
+    if (authMode === 'signup') {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    }
+    closeAuthModal();
+    const { data: { user } } = await supabase.auth.getUser();
+    updateAuthUI(user);
+    if (user) await loadProgress().then(() => { updateStats(); syncLevelTabs(); });
+  } catch (err) {
+    errEl.textContent = err.message || 'Something went wrong';
+  }
+  btn.disabled = false;
+  return false;
+}
+
+async function signOut() {
+  if (!supabase) return;
+  await supabase.auth.signOut();
+  updateAuthUI(null);
+}
+
+function updateAuthUI(user) {
+  const btnSignIn = document.getElementById('btnSignIn');
+  const userPill = document.getElementById('userPill');
+  const userEmail = document.getElementById('userEmail');
+  const authBanner = document.getElementById('authBanner');
+  if (!supabase) { btnSignIn.style.display = 'none'; userPill.style.display = 'none'; authBanner.classList.remove('show'); return; }
+  if (user) {
+    btnSignIn.style.display = 'none';
+    userPill.style.display = 'flex';
+    userEmail.textContent = user.email || 'Signed in';
+    authBanner.classList.remove('show');
+  } else {
+    btnSignIn.style.display = 'flex';
+    userPill.style.display = 'none';
+    authBanner.classList.add('show');
+  }
+}
+
+async function loadProgress() {
+  if (!supabase) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  const { data } = await supabase.from('user_progress').select('xp, streak, correct, total, unlocked_level, active_level').eq('user_id', user.id).single();
+  if (data) {
+    STATE.xp = data.xp ?? 0;
+    STATE.streak = data.streak ?? 0;
+    STATE.correct = data.correct ?? 0;
+    STATE.total = data.total ?? 0;
+    STATE.unlockedLevel = Math.min(4, Math.max(1, data.unlocked_level ?? 1));
+    STATE.activeLevel = Math.min(STATE.unlockedLevel, Math.max(1, data.active_level ?? 1));
+  }
+}
+
+async function saveProgress() {
+  if (!supabase) return;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  await supabase.from('user_progress').upsert({
+    user_id: user.id,
+    xp: STATE.xp,
+    streak: STATE.streak,
+    correct: STATE.correct,
+    total: STATE.total,
+    unlocked_level: STATE.unlockedLevel,
+    active_level: STATE.activeLevel
+  }, { onConflict: 'user_id' });
+}
 
 const LEVEL_XP   = [0, 0, 200, 600, 1500];
 const LEVEL_NAMES = ['', 'Analyst Intern', 'Business Analyst', 'Case Analyst', 'MBB Ready'];
@@ -913,6 +1161,7 @@ function submitAnswer() {
   document.getElementById('answerInput').disabled = true;
   document.getElementById('nextBtn').style.display = 'block';
   updateStats();
+  saveProgress();
 }
 
 function skipQuestion() {
@@ -932,6 +1181,7 @@ function skipQuestion() {
   document.getElementById('answerInput').disabled = true;
   document.getElementById('nextBtn').style.display = 'block';
   updateStats();
+  saveProgress();
 }
 
 function nextQuestion() {
@@ -989,6 +1239,8 @@ function switchLevel(level) {
   });
   STATE.activeLevel = level;
   clearInterval(STATE.timerInterval);
+  updateLevelBadge();
+  saveProgress();
   loadQuestion();
 }
 
@@ -998,14 +1250,7 @@ function updateStats() {
   document.getElementById('statAccuracy').textContent = STATE.total > 0 ? acc + '%' : '—';
   document.getElementById('statCorrect').textContent = STATE.correct;
   updateXP(0, false);
-
-  // Update tab lock states
-  for (let i = 2; i <= 4; i++) {
-    const tab = document.getElementById(`tab-${i}`);
-    if (i <= STATE.unlockedLevel) {
-      tab.classList.remove('locked-tab');
-    }
-  }
+  syncLevelTabs();
 }
 
 // ── Keyboard ───────────────────────────────────────────────
@@ -1017,8 +1262,40 @@ document.getElementById('answerInput').addEventListener('keydown', (e) => {
 });
 
 // ── Init ───────────────────────────────────────────────────
-loadQuestion();
-updateStats();
+async function init() {
+  updateAuthUI(null);
+  if (supabase) {
+    supabase.auth.onAuthStateChange((event, session) => {
+      updateAuthUI(session?.user ?? null);
+      if (event === 'SIGNED_IN' && session) loadProgress().then(() => { updateStats(); updateLevelBadge(); });
+    });
+    const { data: { session } } = await supabase.auth.getSession();
+    updateAuthUI(session?.user ?? null);
+    if (session) {
+      await loadProgress();
+      syncLevelTabs();
+    }
+  } else {
+    syncLevelTabs();
+  }
+  updateLevelBadge();
+  updateStats();
+  loadQuestion();
+}
+
+function updateLevelBadge() {
+  document.getElementById('levelBadge').textContent = `Level ${STATE.activeLevel} — ${LEVEL_NAMES[STATE.activeLevel]}`;
+}
+
+function syncLevelTabs() {
+  document.querySelectorAll('.level-tab').forEach((t, i) => {
+    const level = i + 1;
+    t.classList.toggle('active', level === STATE.activeLevel);
+    t.classList.toggle('locked-tab', level > STATE.unlockedLevel);
+  });
+}
+
+init();
 </script>
 </body>
 </html>
