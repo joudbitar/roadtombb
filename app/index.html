@@ -565,7 +565,7 @@
 <div class="catalog-view" id="catalogView">
   <h2 class="catalog-heading">Math roadmap</h2>
   <p class="catalog-sub">Pick a topic from the case math guide (same types as in our research doc). Everything is unlocked — practice what you need.</p>
-  <button type="button" class="btn btn-primary catalog-random-btn" onclick="startDrill(null)">Random mix (all topics)</button>
+  <button type="button" class="btn btn-primary catalog-random-btn" id="catalogRandomBtn">Random mix (all topics)</button>
   <div class="catalog-grid" id="catalogGrid"></div>
 </div>
 
@@ -605,7 +605,7 @@
 </div>
 </div>
 
-<!-- Config & Supabase (config.js is optional; copy from config.example.js) -->
+<!-- Config & Supabase (config.js optional; copy from config.example.js for local auth) -->
 <script>window.__SUPABASE_CONFIG__ = window.__SUPABASE_CONFIG__ || null;</script>
 <script src="config.js" onerror="window.__SUPABASE_CONFIG__=null"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -633,19 +633,19 @@ const STATE = {
 };
 
 // ── Supabase Auth & Persistence ─────────────────────────────
-let supabase = null;
+let sb = null;
 (function initSupabase() {
   const cfg = window.__SUPABASE_CONFIG__;
   const lib = window.supabase;
   if (cfg?.url && cfg?.anonKey && lib?.createClient) {
-    supabase = lib.createClient(cfg.url, cfg.anonKey);
+    sb = lib.createClient(cfg.url, cfg.anonKey);
   }
 })();
 
 let authMode = 'signin'; // 'signin' | 'signup'
 
 function openAuthModal() {
-  if (!supabase) return;
+  if (!sb) return;
   authMode = 'signin';
   document.getElementById('authModalTitle').textContent = 'Sign in';
   document.getElementById('authSubmit').textContent = 'Sign in';
@@ -675,7 +675,7 @@ function switchAuthMode(mode) {
 
 async function submitAuth(e) {
   e.preventDefault();
-  if (!supabase) return false;
+  if (!sb) return false;
   const email = document.getElementById('authEmail').value.trim();
   const password = document.getElementById('authPassword').value;
   const errEl = document.getElementById('authError');
@@ -684,14 +684,14 @@ async function submitAuth(e) {
   btn.disabled = true;
   try {
     if (authMode === 'signup') {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await sb.auth.signUp({ email, password });
       if (error) throw error;
     } else {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await sb.auth.signInWithPassword({ email, password });
       if (error) throw error;
     }
     closeAuthModal();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await sb.auth.getUser();
     updateAuthUI(user);
     if (user) await loadProgress().then(() => { updateStats(); renderCatalog(); });
   } catch (err) {
@@ -702,8 +702,8 @@ async function submitAuth(e) {
 }
 
 async function signOut() {
-  if (!supabase) return;
-  await supabase.auth.signOut();
+  if (!sb) return;
+  await sb.auth.signOut();
   STATE.xp = 0;
   STATE.streak = 0;
   STATE.correct = 0;
@@ -719,7 +719,7 @@ function updateAuthUI(user) {
   const userPill = document.getElementById('userPill');
   const userEmail = document.getElementById('userEmail');
   const authBanner = document.getElementById('authBanner');
-  if (!supabase) { btnSignIn.style.display = 'none'; userPill.style.display = 'none'; authBanner.classList.remove('show'); return; }
+  if (!sb) { btnSignIn.style.display = 'none'; userPill.style.display = 'none'; authBanner.classList.remove('show'); return; }
   if (user) {
     btnSignIn.style.display = 'none';
     userPill.style.display = 'flex';
@@ -733,10 +733,10 @@ function updateAuthUI(user) {
 }
 
 async function loadProgress() {
-  if (!supabase) return;
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!sb) return;
+  const { data: { user } } = await sb.auth.getUser();
   if (!user) return;
-  const { data } = await supabase.from('user_progress').select('xp, streak, correct, total').eq('user_id', user.id).single();
+  const { data } = await sb.from('user_progress').select('xp, streak, correct, total').eq('user_id', user.id).single();
   if (data) {
     STATE.xp = data.xp ?? 0;
     STATE.streak = data.streak ?? 0;
@@ -747,11 +747,11 @@ async function loadProgress() {
 }
 
 async function loadCategoryProgress() {
-  if (!supabase) return;
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!sb) return;
+  const { data: { user } } = await sb.auth.getUser();
   if (!user) return;
   try {
-    const { data, error } = await supabase.from('user_category_progress').select('category_id, correct, total').eq('user_id', user.id);
+    const { data, error } = await sb.from('user_category_progress').select('category_id, correct, total').eq('user_id', user.id);
     if (error) throw error;
     STATE.categoryProgress = {};
     (data || []).forEach(row => {
@@ -764,10 +764,10 @@ async function loadCategoryProgress() {
 }
 
 async function saveProgress() {
-  if (!supabase) return;
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!sb) return;
+  const { data: { user } } = await sb.auth.getUser();
   if (!user) return;
-  await supabase.from('user_progress').upsert({
+  await sb.from('user_progress').upsert({
     user_id: user.id,
     xp: STATE.xp,
     streak: STATE.streak,
@@ -779,11 +779,11 @@ async function saveProgress() {
 }
 
 async function saveCategoryProgressRow(categoryId) {
-  if (!supabase || !categoryId) return;
-  const { data: { user } } = await supabase.auth.getUser();
+  if (!sb || !categoryId) return;
+  const { data: { user } } = await sb.auth.getUser();
   if (!user) return;
   const p = STATE.categoryProgress[categoryId] || { correct: 0, total: 0 };
-  await supabase.from('user_category_progress').upsert({
+  await sb.from('user_category_progress').upsert({
     user_id: user.id,
     category_id: categoryId,
     correct: p.correct,
@@ -1522,14 +1522,14 @@ async function init() {
   document.getElementById('catalogView').style.display = 'block';
   document.getElementById('drillView').style.display = 'none';
   updateAuthUI(null);
-  if (supabase) {
-    supabase.auth.onAuthStateChange((event, session) => {
+  if (sb) {
+    sb.auth.onAuthStateChange((event, session) => {
       updateAuthUI(session?.user ?? null);
       if (event === 'SIGNED_IN' && session) {
         loadProgress().then(() => { updateStats(); renderCatalog(); });
       }
     });
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await sb.auth.getSession();
     updateAuthUI(session?.user ?? null);
     if (session) {
       await loadProgress();
@@ -1538,6 +1538,7 @@ async function init() {
   updatePracticeBadge();
   updateStats();
   renderCatalog();
+  document.getElementById('catalogRandomBtn')?.addEventListener('click', () => startDrill(null));
 }
 
 init();
